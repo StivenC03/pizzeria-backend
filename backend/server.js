@@ -9,8 +9,8 @@ const port = process.env.PORT || 3001;
 
 // Configurazione CORS fondamentale per accettare i cookie dal frontend
 app.use(cors({
-  origin: function(origin, callback){ return callback(null, true); },
-  credentials: true 
+  origin: 'https://pizzeria-frontend-rho.vercel.app/', // <--- Metti il tuo link Vercel qui
+  credentials: true
 }));
 
 app.use(express.json());
