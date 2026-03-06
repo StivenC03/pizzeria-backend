@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Connessione a MongoDB (INSERISCI QUI IL TUO URI)
-mongoose.connect('mongodb+srv://stiven:A72f4JJRoRLjkCMz@cluster0.vz9pbpw.mongodb.net/?appName=Cluster0')
+mongoose.connect('mongodb+srv://stiven:stiven2003@cluster0.vz9pbpw.mongodb.net/?appName=Cluster0')
   .then(() => console.log("Connesso a MongoDB"))
   .catch(err => console.error("Errore di connessione", err));
 
