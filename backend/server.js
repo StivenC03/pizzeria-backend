@@ -150,7 +150,12 @@ app.get('/api/check-session', (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
-  res.clearCookie('sessione_utente');
+  // Dobbiamo specificare le stesse opzioni usate per crearlo
+  res.clearCookie('sessione_utente', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+  });
   res.json({ success: true, message: "Logout effettuato" });
 });
 
