@@ -37,8 +37,8 @@ exports.login = async (req, res) => {
 
    res.cookie('token', token, { 
       httpOnly: true,                 
-      secure: true, 
-      sameSite: 'none',             
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'lax',             
       maxAge: 3600000                 
     });
 
@@ -61,7 +61,7 @@ exports.logout = (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: true,
-    sameSite: 'none'
+    sameSite: 'lax'
   });
   res.json({ success: true, message: "Logout effettuato" });
 };
