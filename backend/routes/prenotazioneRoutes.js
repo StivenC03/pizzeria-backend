@@ -5,7 +5,7 @@ const prenController = require('../controllers/prenotazioneController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 
-
+router.use(authMiddleware);
 
 
 router.get('/prenotazioni/:username', prenController.getPrenotazioniUtente);
