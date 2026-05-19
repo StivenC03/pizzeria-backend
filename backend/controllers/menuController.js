@@ -1,6 +1,6 @@
 const Pizza = require('../models/Pizza');
 
-// Logica per il popolamento iniziale
+
 exports.inizializzaMenu = async () => {
   try {
     const conteggio = await Pizza.countDocuments();
@@ -29,11 +29,19 @@ exports.inizializzaMenu = async () => {
   }
 };
 
+
 exports.getMenu = async (req, res) => {
   try {
+    // Supponendo che il tuo modello si chiami Pizza
     const menu = await Pizza.find();
     res.json(menu);
   } catch (err) {
-    res.status(500).json({ message: "Errore del server" });
+    // QUESTA RIGA È FONDAMENTALE PER VEDERE L'ERRORE SU RENDER
+    console.error("ERRORE NELLA GET MENU:", err); 
+    
+    res.status(500).json({ 
+      message: "Errore del server", 
+      error: err.message // Aggiungiamo anche il messaggio per vederlo nel browser
+    });
   }
 };
