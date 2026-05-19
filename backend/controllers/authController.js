@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => { 
   try {
@@ -28,24 +29,23 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Password errata" });
 
-    res.cookie('sessione_utente', user.username, { 
-      httpOnly: true,
-      secure: true,  
-      sameSite: 'none',
-      maxAge: 1000 * 60 * 60 * 24
+    const token = jwt.sign(
+        { id: user._id, username: user.username }, 
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }     
+    );
+
+   res.cookie('token', token, { 
+      httpOnly: true,                 
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'strict',             
+      maxAge: 3600000                 
     });
 
     res.json({ success: true, message: "Login effettuato!", username: user.username });
-  }  catch (err) {
-  // Questo stamperà l'errore specifico (es. Duplicate Key o Connection Timeout) 
-  // nei log di Render
-  console.error("ERRORE DURANTE LA REGISTRAZIONE:", err); 
-  
-  res.status(500).json({ 
-    message: "Errore durante la registrazione",
-    error: err.message // Aggiungi questo per vedere l'errore nel browser
-  });
-
+  } catch (err) {
+    res.status(500).json({ message: "Errore durante il login" });
+  }
 };
 
 exports.checkSession = (req, res) => {
