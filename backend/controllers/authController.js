@@ -49,10 +49,16 @@ exports.login = async (req, res) => {
 };
 
 exports.checkSession = (req, res) => {
-  const utenteLoggato = req.cookies.token;
-  if (utenteLoggato) {
-    res.json({ loggedIn: true, username: utenteLoggato });
-  } else {
+  const token = req.cookies.token;
+  
+  if (!token) {
+    return res.json({ loggedIn: false });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.json({ loggedIn: true, username: decoded.username });
+  } catch (error) {
     res.json({ loggedIn: false });
   }
 };
