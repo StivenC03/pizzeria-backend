@@ -35,7 +35,7 @@ app.use(express.json());
 app.use(cookieParser()); 
 
 
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(dbURI)
   .then(() => {
     
     console.log("Connesso a MongoDB");
