@@ -49,7 +49,7 @@ exports.login = async (req, res) => {
 };
 
 exports.checkSession = (req, res) => {
-  const utenteLoggato = req.cookies.sessione_utente;
+  const utenteLoggato = req.cookies.token;
   if (utenteLoggato) {
     res.json({ loggedIn: true, username: utenteLoggato });
   } else {
@@ -58,7 +58,7 @@ exports.checkSession = (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie('sessione_utente', {
+  res.clearCookie('token', {
     httpOnly: true,
     secure: true,
     sameSite: 'none'
