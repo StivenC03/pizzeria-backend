@@ -18,7 +18,7 @@ const dbURI = process.env.MONGO_URI;
 
 
 app.use(cors({
-  origin: function(origin, callback){ return callback(null, true); },
+  origin: process.env.FRONTEND_URL,
   credentials: true 
 }));
 
