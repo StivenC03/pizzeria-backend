@@ -18,14 +18,14 @@ const PORT = process.env.PORT || 5000;
 const dbURI = process.env.MONGO_URI;
 
 
-const cors = require('cors');
+
 app.use(cors({
   origin: process.env.FRONTEND_URL, // Inserisci l'URL reale del frontend
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(cors(corsOptions));
+
 app.use(express.json()); 
 app.use(cookieParser()); 
 
