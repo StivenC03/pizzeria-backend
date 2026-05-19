@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL, // Inserisci l'URL reale del frontend
+  origin: process.env.FRONTEND_URL,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
