@@ -16,6 +16,7 @@ const menuController = require('./controllers/menuController');
 const app = express(); 
 const PORT = process.env.PORT || 5000;
 const dbURI = process.env.MONGO_URI;
+
 // Aggiungi questo in server.js
 app.use((req, res, next) => {
     console.log(`[DEBUG] Ricevuta richiesta: ${req.method} ${req.url}`);
@@ -34,7 +35,7 @@ app.use(express.json());
 app.use(cookieParser()); 
 
 
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     
     console.log("Connesso a MongoDB");
