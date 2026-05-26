@@ -1,58 +1,39 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
+const http = require('http');
+const { Server } = require('socket.io');
 
+const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "https://pizzeria-frontend-xbfp.onrender.com",
+    methods: ["GET", "POST", "DELETE"],
+    credentials: true
+  }
+});
+
+app.set('io', io);
+
+app.use(cors({
+    origin: "https://pizzeria-frontend-xbfp.onrender.com", 
+    credentials: true 
+}));
+app.use(express.json());
 
 const authRoutes = require('./routes/authRoutes');
 const menuRoutes = require('./routes/menuRoutes');
 const prenotazioneRoutes = require('./routes/prenotazioneRoutes');
 
+app.use('/api/auth', authRoutes);
+app.use('/api/menu', menuRoutes);
+app.use('/api/prenotazioni', prenotazioneRoutes);
 
-const menuController = require('./controllers/menuController');
+mongoose.connect(process.env.MONGO_URI || 'tua_stringa_di_connessione')
+  .then(() => console.log('MongoDB Connesso'))
+  .catch(err => console.log(err));
 
-
-const app = express(); 
 const PORT = process.env.PORT || 5000;
-const dbURI = process.env.MONGO_URI;
-
-// Aggiungi questo in server.js
-app.use((req, res, next) => {
-    console.log(`[DEBUG] Ricevuta richiesta: ${req.method} ${req.url}`);
-    next();
-});
-
-
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-app.use(express.json()); 
-app.use(cookieParser()); 
-
-
-mongoose.connect(dbURI)
-  .then(() => {
-    
-    console.log("Connesso a MongoDB");
-    
-    menuController.inizializzaMenu(); 
-  })
-  .catch(err => console.error("Errore di connessione", err));
-
-
-
-
-app.use('/api', authRoutes); 
-app.use('/api', menuRoutes); 
-app.use('/api', prenotazioneRoutes); 
-
-
-app.listen(PORT, () => {
-
-  console.log(`Server modulare in ascolto sulla porta ${PORT}`);
-});
+server.listen(PORT, () => console.log(`Server avviato sulla porta ${PORT}`));
