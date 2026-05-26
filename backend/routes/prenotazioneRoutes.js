@@ -1,15 +1,10 @@
-
 const express = require('express');
 const router = express.Router();
-const prenController = require('../controllers/prenotazioneController');
-const authMiddleware = require('../middleware/authMiddleware');
+const prenotazioneController = require('../controllers/prenotazioneController');
 
-
-router.use(authMiddleware);
-
-
-router.get('/prenotazioni/:username', prenController.getPrenotazioniUtente);
-router.post('/prenotazioni', prenController.creaPrenotazione);
-router.delete('/prenotazioni/:id', prenController.eliminaPrenotazione);
+router.get('/disponibilita/:data/:orario', prenotazioneController.getDisponibilita);
+router.get('/:username', prenotazioneController.getPrenotazioniUtente);
+router.post('/', prenotazioneController.creaPrenotazione);
+router.delete('/:id', prenotazioneController.eliminaPrenotazione);
 
 module.exports = router;
