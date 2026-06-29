@@ -1,0 +1,73 @@
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+exports.register = async (req, res) => { 
+  try {
+    const { username, password } = req.body; 
+    
+    const existingUser = await User.findOne({ username }); 
+    if (existingUser) return res.status(400).json({ message: "Username già in uso" });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({ username, password: hashedPassword });
+    await newUser.save();
+    res.json({ success: true, message: "Registrazione completata!" });
+  } catch (err) {
+    res.status(500).json({ message: "Errore durante la registrazione" }); 
+  } 
+};
+
+exports.login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username }); 
+    if (!user) return res.status(400).json({ message: "Utente non trovato" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Password errata" });
+
+    const token = jwt.sign(
+        { id: user._id, username: user.username }, 
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }     
+    );
+
+   res.cookie('token', token, { 
+      httpOnly: true,                 
+      secure: true, 
+      sameSite: 'none',             
+      maxAge: 3600000                 
+    });
+
+    res.json({ success: true, message: "Login effettuato!", username: user.username });
+  } catch (err) {
+    res.status(500).json({ message: "Errore durante il login" });
+  }
+};
+
+exports.checkSession = (req, res) => {
+  const token = req.cookies.token;
+  
+  if (!token) {
+    return res.json({ loggedIn: false });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.json({ loggedIn: true, username: decoded.username });
+  } catch (error) {
+    res.json({ loggedIn: false });
+  }
+};
+
+exports.logout = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+  });
+  res.json({ success: true, message: "Logout effettuato" });
+};
